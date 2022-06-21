@@ -109,14 +109,11 @@ class _DraggableFloatingActionButtonState
       child: Listener(
         onPointerMove: (PointerMoveEvent pointerMoveEvent) {
           _updatePosition(pointerMoveEvent);
-
           setState(() {
             _isDragging = true;
           });
         },
         onPointerUp: (PointerUpEvent pointerUpEvent) {
-          print('onPointerUp');
-
           if (_isDragging) {
             setState(() {
               _isDragging = false;

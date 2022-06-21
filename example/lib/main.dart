@@ -18,11 +18,12 @@ class ExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LogsButton(
+    return MaterialApp(
       navigatorKey: _navigatorKey,
-      child: MaterialApp(
+      home: const DemoPage(),
+      builder: (context, child) => LogsButton(
         navigatorKey: _navigatorKey,
-        home: const DemoPage(),
+        child: child!,
       ),
     );
   }

@@ -89,9 +89,8 @@ class _DefaultLoggyItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final String timeStr = record.time.toIso8601String().split('T')[1];
 
-    return Container(
-      color: Colors.transparent,
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 2.0),
+    return Card(
+      clipBehavior: Clip.hardEdge,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -100,7 +99,7 @@ class _DefaultLoggyItemWidget extends StatelessWidget {
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Flexible(
+                Expanded(
                   child: Text(
                     '${record.level.name.toUpperCase()} - $timeStr',
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
@@ -110,13 +109,15 @@ class _DefaultLoggyItemWidget extends StatelessWidget {
                         ),
                   ),
                 ),
-                Text(
-                  record.loggerName,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        color: _getLogColor(),
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14.0,
-                      ),
+                Flexible(
+                  child: Text(
+                    record.loggerName,
+                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                          color: _getLogColor(),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14.0,
+                        ),
+                  ),
                 ),
               ],
             ),
