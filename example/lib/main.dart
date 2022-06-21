@@ -20,6 +20,7 @@ class ExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: _navigatorKey,
+      navigatorObservers: [LogNavigatorObserver()],
       home: const DemoPage(),
       builder: (context, child) => LogsButton(
         customRecordBuilders: {

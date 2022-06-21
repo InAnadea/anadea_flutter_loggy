@@ -42,7 +42,8 @@ class LogsScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final Map<String, List<LogRecord>> groupedRecords = {};
+        final SplayTreeMap<String, List<LogRecord>> groupedRecords =
+            SplayTreeMap((a, b) => a.compareTo(b));
         for (final record in records.data!) {
           if (record.level.priority < logLevel!.priority) continue;
 
