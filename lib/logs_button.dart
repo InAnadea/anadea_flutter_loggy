@@ -36,6 +36,7 @@ class _LogsButtonState extends State<LogsButton> {
                 });
                 widget.navigatorKey.currentState?.push(
                   MaterialPageRoute(
+                    settings: const RouteSettings(name: 'logs'),
                     builder: (context) => WillPopScope(
                       onWillPop: () async {
                         setState(() {
