@@ -18,11 +18,11 @@ class LogsScreen extends StatelessWidget {
   const LogsScreen({
     this.logLevel = LogLevel.all,
     Key? key,
-    this.builders = const {},
+    this.customRecordBuilders = const {},
   }) : super(key: key);
 
   final LogLevel? logLevel;
-  final Map<Type, LogRecordCardBuilder> builders;
+  final Map<Type, LogRecordCardBuilder> customRecordBuilders;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +70,9 @@ class LogsScreen extends StatelessWidget {
                     reverse: true,
                     children: [
                       for (final record in groupedRecords[loggerName]!)
-                        if (builders.containsKey(record.object.runtimeType))
-                          builders[record.object.runtimeType]!
+                        if (customRecordBuilders
+                            .containsKey(record.object.runtimeType))
+                          customRecordBuilders[record.object.runtimeType]!
                               .call(context, record)
                         else
                           _DefaultLoggyItemWidget(record)
@@ -98,35 +99,15 @@ class _DefaultLoggyItemWidget extends StatelessWidget {
     return Card(
       clipBehavior: Clip.hardEdge,
       color: _getLogColor(context),
-      child: ExpansionTile(
-        expandedAlignment: Alignment.topCenter,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                '${record.level.name.toUpperCase()} - $timeStr',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Flexible(
-              child: Text(
-                record.loggerName,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ],
+      child: ListTile(
+        title: Text(
+          '${record.level.name.toUpperCase()} - $timeStr',
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         subtitle: Text(
           record.message,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        children: [
-          Text(
-            record.message,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
       ),
     );
   }
