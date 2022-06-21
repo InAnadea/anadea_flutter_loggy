@@ -9,6 +9,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  dio: ^4.0.6
   flutter:
     sdk: flutter
   flutter_loggy: ^2.0.1

@@ -1,4 +1,5 @@
 import 'package:anadea_flutter_loggy/anadea_flutter_loggy.dart';
+import 'package:dio/dio.dart' hide LogInterceptor;
 import 'package:flutter/material.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:loggy/loggy.dart';
@@ -21,7 +22,7 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       navigatorObservers: [LogNavigatorObserver()],
-      home: const DemoPage(),
+      home: DemoPage(),
       builder: (context, child) => Inspector(
         customRecordBuilders: {
           TestLogModel: (context, record) => Text(record.object.toString())
@@ -34,9 +35,11 @@ class ExampleApp extends StatelessWidget {
 }
 
 class DemoPage extends StatelessWidget {
-  const DemoPage({
+  DemoPage({
     Key? key,
   }) : super(key: key);
+
+  final dio = Dio()..interceptors.add(LogInterceptor());
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +86,15 @@ class DemoPage extends StatelessWidget {
                 logError(TestLogModel('content'));
               },
               child: Text("log speciffic type"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                dio.get(
+                  'http://www.7timer.info/bin/api.pl?lon=113.17&lat=23.09&product=astro&output=xml',
+                );
+              },
+              child: Text("test dio logs"),
             ),
           ],
         ),

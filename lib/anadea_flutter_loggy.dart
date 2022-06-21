@@ -8,6 +8,7 @@ import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:loggy/loggy.dart';
 
 export 'loggers/navigation.dart';
+export 'loggers/dio.dart';
 
 part 'logs_screen.dart';
 part 'inspector.dart';
