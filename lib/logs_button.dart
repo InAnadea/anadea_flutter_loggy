@@ -5,10 +5,12 @@ class LogsButton extends StatefulWidget {
     Key? key,
     required this.child,
     required this.navigatorKey,
+    this.builders = const {},
   }) : super(key: key);
 
   final Widget child;
   final GlobalKey<NavigatorState> navigatorKey;
+  final Map<Type, LogRecordCardBuilder> builders;
 
   @override
   State<LogsButton> createState() => _LogsButtonState();
@@ -41,7 +43,9 @@ class _LogsButtonState extends State<LogsButton> {
                         });
                         return true;
                       },
-                      child: const LogsScreen(),
+                      child: LogsScreen(
+                        builders: widget.builders,
+                      ),
                     ),
                   ),
                 );

@@ -22,6 +22,9 @@ class ExampleApp extends StatelessWidget {
       navigatorKey: _navigatorKey,
       home: const DemoPage(),
       builder: (context, child) => LogsButton(
+        builders: {
+          TestLogModel: (context, record) => Text(record.object.toString())
+        },
         navigatorKey: _navigatorKey,
         child: child!,
       ),
@@ -59,9 +62,36 @@ class DemoPage extends StatelessWidget {
               },
               child: Text("log warning"),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                logDebug("debug message");
+              },
+              child: Text("log debug"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                logError("error message");
+              },
+              child: Text("log error"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                logError(TestLogModel('content'));
+              },
+              child: Text("log speciffic type"),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+class TestLogModel {
+  TestLogModel(this.content);
+
+  final String content;
 }

@@ -5,17 +5,24 @@ class WrongPrinterException implements Exception {
 
   @override
   String toString() {
-    return 'ERROR: Loggy printer is not set as StreamPrinter!\n\n';
+    return 'WrongPrinterException: Loggy printer is not set as StreamPrinter!';
   }
 }
+
+typedef LogRecordCardBuilder = Widget Function(
+  BuildContext context,
+  LogRecord record,
+);
 
 class LogsScreen extends StatelessWidget {
   const LogsScreen({
     this.logLevel = LogLevel.all,
     Key? key,
+    this.builders = const {},
   }) : super(key: key);
 
   final LogLevel? logLevel;
+  final Map<Type, LogRecordCardBuilder> builders;
 
   @override
   Widget build(BuildContext context) {
@@ -25,57 +32,56 @@ class LogsScreen extends StatelessWidget {
     }
     final StreamPrinter printer = Loggy.currentPrinter as StreamPrinter;
 
-    return Theme(
-      data: ThemeData(
-        colorScheme: const ColorScheme.dark(),
-      ),
-      child: StreamBuilder<List<LogRecord>>(
-        stream: printer.logRecord,
-        builder: (
-          BuildContext context,
-          AsyncSnapshot<List<LogRecord>> records,
-        ) {
-          if (!records.hasData) {
-            return const Center(child: CircularProgressIndicator());
+    return StreamBuilder<List<LogRecord>>(
+      stream: printer.logRecord,
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<List<LogRecord>> records,
+      ) {
+        if (!records.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final Map<String, List<LogRecord>> groupedRecords = {};
+        for (final record in records.data!) {
+          if (record.level.priority < logLevel!.priority) continue;
+
+          if (!groupedRecords.containsKey(record.loggerName)) {
+            groupedRecords[record.loggerName] = [];
           }
+          groupedRecords[record.loggerName]!.add(record);
+        }
 
-          final Map<String, List<LogRecord>> groupedRecords = {};
-          for (final record in records.data!) {
-            if (record.level.priority < logLevel!.priority) continue;
-
-            if (!groupedRecords.containsKey(record.loggerName)) {
-              groupedRecords[record.loggerName] = [];
-            }
-            groupedRecords[record.loggerName]!.add(record);
-          }
-
-          return DefaultTabController(
-            length: groupedRecords.keys.length,
-            child: Scaffold(
-              appBar: AppBar(
-                bottom: TabBar(
-                  tabs: [
-                    for (final loggerName in groupedRecords.keys)
-                      Tab(text: loggerName)
-                  ],
-                ),
-              ),
-              body: TabBarView(
-                children: [
+        return DefaultTabController(
+          length: groupedRecords.keys.length,
+          child: Scaffold(
+            appBar: AppBar(
+              bottom: TabBar(
+                tabs: [
                   for (final loggerName in groupedRecords.keys)
-                    ListView(
-                      reverse: true,
-                      children: [
-                        for (final record in groupedRecords[loggerName]!)
-                          _DefaultLoggyItemWidget(record)
-                      ],
-                    ),
+                    Tab(text: loggerName)
                 ],
               ),
             ),
-          );
-        },
-      ),
+            body: TabBarView(
+              children: [
+                for (final loggerName in groupedRecords.keys)
+                  ListView(
+                    reverse: true,
+                    children: [
+                      for (final record in groupedRecords[loggerName]!)
+                        if (builders.containsKey(record.object.runtimeType))
+                          builders[record.object.runtimeType]!
+                              .call(context, record)
+                        else
+                          _DefaultLoggyItemWidget(record)
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -91,86 +97,55 @@ class _DefaultLoggyItemWidget extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.hardEdge,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          ExpansionTile(
-            expandedAlignment: Alignment.topCenter,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    '${record.level.name.toUpperCase()} - $timeStr',
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                          color: _getLogColor(),
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12.0,
-                        ),
-                  ),
-                ),
-                Flexible(
-                  child: Text(
-                    record.loggerName,
-                    style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                          color: _getLogColor(),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.0,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-            subtitle: Text(
-              record.message,
-              style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    color: _getLogColor(),
-                    fontWeight: _getTextWeight(),
-                    fontSize: 14.0,
-                  ),
-              maxLines: 2,
-            ),
-            children: [
-              Text(
-                record.message,
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      color: _getLogColor(),
-                      fontWeight: _getTextWeight(),
-                      fontSize: 16.0,
-                    ),
+      color: _getLogColor(context),
+      child: ExpansionTile(
+        expandedAlignment: Alignment.topCenter,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                '${record.level.name.toUpperCase()} - $timeStr',
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-            ],
+            ),
+            Flexible(
+              child: Text(
+                record.loggerName,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        subtitle: Text(
+          record.message,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        children: [
+          Text(
+            record.message,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ),
     );
   }
 
-  FontWeight _getTextWeight() {
-    switch (record.level) {
-      case LogLevel.error:
-        return FontWeight.w700;
-      case LogLevel.debug:
-        return FontWeight.w300;
-      case LogLevel.info:
-        return FontWeight.w300;
-      case LogLevel.warning:
-        return FontWeight.w400;
-    }
+  Color _getLogColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return FontWeight.w300;
-  }
-
-  Color _getLogColor() {
     switch (record.level) {
-      case LogLevel.error:
-        return Colors.redAccent;
-      case LogLevel.debug:
-        return Colors.lightBlue;
       case LogLevel.info:
-        return Colors.lightGreen;
+        return colorScheme.surface;
+
+      case LogLevel.debug:
+        return colorScheme.surfaceVariant;
+
       case LogLevel.warning:
-        return Colors.yellow;
+        return colorScheme.tertiaryContainer;
+
+      case LogLevel.error:
+        return colorScheme.errorContainer;
     }
 
     return Colors.white;
