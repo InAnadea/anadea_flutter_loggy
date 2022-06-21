@@ -25,62 +25,65 @@ class LogsScreen extends StatelessWidget {
     }
     final StreamPrinter printer = Loggy.currentPrinter as StreamPrinter;
 
-    return StreamBuilder<List<LogRecord>>(
-      stream: printer.logRecord,
-      builder: (
-        BuildContext context,
-        AsyncSnapshot<List<LogRecord>> records,
-      ) {
-        if (!records.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final Map<String, List<LogRecord>> groupedRecords = {};
-        for (final record in records.data!) {
-          if (record.level.priority < logLevel!.priority) continue;
-
-          if (groupedRecords.containsKey(record.loggerName)) {
-            groupedRecords[record.loggerName] = [];
+    return Theme(
+      data: ThemeData(
+        colorScheme: const ColorScheme.dark(),
+      ),
+      child: StreamBuilder<List<LogRecord>>(
+        stream: printer.logRecord,
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<List<LogRecord>> records,
+        ) {
+          if (!records.hasData) {
+            return const Center(child: CircularProgressIndicator());
           }
-          groupedRecords[record.loggerName]!.add(record);
-        }
 
-        return DefaultTabController(
-          length: groupedRecords.keys.length,
-          child: Scaffold(
-            appBar: TabBar(tabs: [
-              for (final loggerName in groupedRecords.keys)
-                Tab(text: loggerName)
-            ]),
-            body: TabBarView(
-              children: [
+          final Map<String, List<LogRecord>> groupedRecords = {};
+          for (final record in records.data!) {
+            if (record.level.priority < logLevel!.priority) continue;
+
+            if (!groupedRecords.containsKey(record.loggerName)) {
+              groupedRecords[record.loggerName] = [];
+            }
+            groupedRecords[record.loggerName]!.add(record);
+          }
+
+          return DefaultTabController(
+            length: groupedRecords.keys.length,
+            child: Scaffold(
+              appBar: TabBar(tabs: [
                 for (final loggerName in groupedRecords.keys)
-                  ListView(
-                    reverse: true,
-                    children: [
-                      for (final record in groupedRecords[loggerName]!)
-                        _CustomLoggyItemWidget(record)
-                    ],
-                  ),
-              ],
+                  Tab(text: loggerName)
+              ]),
+              body: TabBarView(
+                children: [
+                  for (final loggerName in groupedRecords.keys)
+                    ListView(
+                      reverse: true,
+                      children: [
+                        for (final record in groupedRecords[loggerName]!)
+                          _DefaultLoggyItemWidget(record)
+                      ],
+                    ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
 
-class _CustomLoggyItemWidget extends StatelessWidget {
-  const _CustomLoggyItemWidget(this.record, {Key? key}) : super(key: key);
+class _DefaultLoggyItemWidget extends StatelessWidget {
+  const _DefaultLoggyItemWidget(this.record, {Key? key}) : super(key: key);
 
   final LogRecord record;
 
   @override
   Widget build(BuildContext context) {
-    final Color logColor = _getLogColor();
-    final String time = record.time.toIso8601String().split('T')[1];
-    const Color dividerColor = Colors.white;
+    final String timeStr = record.time.toIso8601String().split('T')[1];
 
     return Container(
       color: Colors.transparent,
@@ -88,55 +91,50 @@ class _CustomLoggyItemWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Flexible(
-                    child: Text(
-                      '${record.level.name.toUpperCase()} - $time',
-                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                            color: logColor,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12.0,
-                          ),
-                    ),
-                  ),
-                  Text(
-                    record.loggerName,
+          ExpansionTile(
+            expandedAlignment: Alignment.topCenter,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Text(
+                    '${record.level.name.toUpperCase()} - $timeStr',
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                          color: logColor,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.0,
+                          color: _getLogColor(),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.0,
                         ),
                   ),
-                ],
-              ),
-              subtitle: Text(
-                record.message,
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      color: logColor,
-                      fontWeight: _getTextWeight(),
-                      fontSize: 14.0,
-                    ),
-                maxLines: 2,
-              ),
-              children: [
+                ),
                 Text(
-                  record.message,
+                  record.loggerName,
                   style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                        color: logColor,
-                        fontWeight: _getTextWeight(),
-                        fontSize: 16.0,
+                        color: _getLogColor(),
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14.0,
                       ),
                 ),
               ],
             ),
-          ),
-          const Divider(
-            color: dividerColor,
+            subtitle: Text(
+              record.message,
+              style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                    color: _getLogColor(),
+                    fontWeight: _getTextWeight(),
+                    fontSize: 14.0,
+                  ),
+              maxLines: 2,
+            ),
+            children: [
+              Text(
+                record.message,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: _getLogColor(),
+                      fontWeight: _getTextWeight(),
+                      fontSize: 16.0,
+                    ),
+              ),
+            ],
           ),
         ],
       ),
