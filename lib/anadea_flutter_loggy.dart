@@ -5,3 +5,4 @@ import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:loggy/loggy.dart';
 
 part 'logs_screen.dart';
+part 'logs_button.dart';

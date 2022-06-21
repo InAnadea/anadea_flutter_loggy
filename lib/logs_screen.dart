@@ -52,10 +52,14 @@ class LogsScreen extends StatelessWidget {
           return DefaultTabController(
             length: groupedRecords.keys.length,
             child: Scaffold(
-              appBar: TabBar(tabs: [
-                for (final loggerName in groupedRecords.keys)
-                  Tab(text: loggerName)
-              ]),
+              appBar: AppBar(
+                bottom: TabBar(
+                  tabs: [
+                    for (final loggerName in groupedRecords.keys)
+                      Tab(text: loggerName)
+                  ],
+                ),
+              ),
               body: TabBarView(
                 children: [
                   for (final loggerName in groupedRecords.keys)

@@ -4,21 +4,26 @@ import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:loggy/loggy.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   Loggy.initLoggy(
     logPrinter: StreamPrinter(const PrettyPrinter()),
   );
 
-  runApp(const ExampleApp());
+  runApp(ExampleApp());
 }
 
 class ExampleApp extends StatelessWidget {
-  const ExampleApp({Key? key}) : super(key: key);
+  ExampleApp({Key? key}) : super(key: key);
+
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: DemoPage(),
+    return LogsButton(
+      navigatorKey: _navigatorKey,
+      child: MaterialApp(
+        navigatorKey: _navigatorKey,
+        home: const DemoPage(),
+      ),
     );
   }
 }
@@ -44,24 +49,14 @@ class DemoPage extends StatelessWidget {
               onPressed: () {
                 logInfo('message');
               },
-              child: Text("log warning"),
+              child: Text("log message"),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 logWarning("warning message");
               },
-              child: Text("log message"),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LogsScreen()),
-                );
-              },
-              child: Text("Open Logs"),
+              child: Text("log warning"),
             ),
           ],
         ),
