@@ -10,4 +10,4 @@ import 'package:loggy/loggy.dart';
 export 'loggers/navigation.dart';
 
 part 'logs_screen.dart';
-part 'logs_button.dart';
+part 'inspector.dart';

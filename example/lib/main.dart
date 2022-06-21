@@ -22,7 +22,7 @@ class ExampleApp extends StatelessWidget {
       navigatorKey: _navigatorKey,
       navigatorObservers: [LogNavigatorObserver()],
       home: const DemoPage(),
-      builder: (context, child) => LogsButton(
+      builder: (context, child) => Inspector(
         customRecordBuilders: {
           TestLogModel: (context, record) => Text(record.object.toString())
         },

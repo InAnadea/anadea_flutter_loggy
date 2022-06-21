@@ -1,7 +1,7 @@
 part of 'anadea_flutter_loggy.dart';
 
-class LogsButton extends StatefulWidget {
-  const LogsButton({
+class Inspector extends StatefulWidget {
+  const Inspector({
     Key? key,
     required this.child,
     required this.navigatorKey,
@@ -13,10 +13,10 @@ class LogsButton extends StatefulWidget {
   final Map<Type, LogRecordCardBuilder> customRecordBuilders;
 
   @override
-  State<LogsButton> createState() => _LogsButtonState();
+  State<Inspector> createState() => _InspectorState();
 }
 
-class _LogsButtonState extends State<LogsButton> {
+class _InspectorState extends State<Inspector> {
   bool _isShowButton = true;
 
   @override
