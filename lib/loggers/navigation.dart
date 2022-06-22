@@ -64,7 +64,28 @@ class NavigationLogRecord {
 
   @override
   String toString() {
-    return '$type';
+    final String title;
+    switch (type) {
+      case NavigationLogRecordType.didRemove:
+      case NavigationLogRecordType.didPop:
+        title = '"${secondRoute?.settings.name ?? 'undefined route name'}"'
+            ' <<< "${route?.settings.name ?? 'undefined route name'}"';
+        break;
+
+      case NavigationLogRecordType.didReplace:
+      case NavigationLogRecordType.didPush:
+        title = '"${secondRoute?.settings.name ?? 'undefined route name'}"'
+            ' >>> "${route?.settings.name ?? 'undefined route name'}"';
+        break;
+
+      case NavigationLogRecordType.didStartUserGesture:
+        title = 'Gesture started';
+        break;
+      case NavigationLogRecordType.didStopUserGesture:
+        title = 'Gesture stoped';
+        break;
+    }
+    return title;
   }
 }
 

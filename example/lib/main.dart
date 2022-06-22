@@ -93,6 +93,9 @@ class DemoPage extends StatelessWidget {
                 dio.get(
                   'http://www.7timer.info/bin/api.pl?lon=113.17&lat=23.09&product=astro&output=xml',
                 );
+                dio.get(
+                  'http://www.7timer.info/bn/api.pl?lon=113.17&lat=23.09&product=astro&output=xml',
+                );
               },
               child: Text("test dio logs"),
             ),

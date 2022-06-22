@@ -24,6 +24,27 @@ class DioLogRecord {
   final DioError? error;
   final Response<dynamic>? response;
   final DioLogRecordType type;
+
+  @override
+  String toString() {
+    String str = '';
+
+    switch (type) {
+      case DioLogRecordType.request:
+        str += 'REQUEST ${options?.path}';
+        break;
+
+      case DioLogRecordType.error:
+        str += 'ERROR ${error?.requestOptions.uri} ${error?.message}';
+        break;
+
+      case DioLogRecordType.response:
+        str += 'RESPONSE ${response?.requestOptions.uri}';
+        break;
+    }
+
+    return str;
+  }
 }
 
 class LogInterceptor extends Interceptor with DioLoggy {

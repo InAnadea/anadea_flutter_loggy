@@ -91,34 +91,8 @@ class LogsScreen extends StatelessWidget {
   }
 
   Card _buildNavigationRecord(NavigationLogRecord record) {
-    final Widget title;
-
-    switch (record.type) {
-      case NavigationLogRecordType.didRemove:
-      case NavigationLogRecordType.didPop:
-        title = Text(
-          '"${record.secondRoute?.settings.name ?? 'undefined route name'}"'
-          ' <<< "${record.route?.settings.name ?? 'undefined route name'}"',
-        );
-        break;
-
-      case NavigationLogRecordType.didReplace:
-      case NavigationLogRecordType.didPush:
-        title = Text(
-          '"${record.secondRoute?.settings.name ?? 'undefined route name'}"'
-          ' >>> "${record.route?.settings.name ?? 'undefined route name'}"',
-        );
-        break;
-
-      case NavigationLogRecordType.didStartUserGesture:
-        title = Text('Gesture started');
-        break;
-      case NavigationLogRecordType.didStopUserGesture:
-        title = Text('Gesture stoped');
-        break;
-    }
     return Card(
-      child: title,
+      child: Text(record.toString()),
     );
   }
 }
