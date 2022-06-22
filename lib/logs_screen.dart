@@ -151,7 +151,10 @@ class LogsScreen extends StatelessWidget {
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
-                JsonViewer(jsonDecode(record.options!.data))
+                if (record.options!.data is String)
+                  JsonViewer(jsonDecode(record.options!.data))
+                else
+                  JsonViewer(record.options!.data)
               ],
             ],
             if (record.response != null) ...[
@@ -172,7 +175,10 @@ class LogsScreen extends StatelessWidget {
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
-              JsonViewer(jsonDecode(record.response!.data))
+              if (record.response!.data is String)
+                JsonViewer(jsonDecode(record.response!.data))
+              else
+                JsonViewer(record.response!.data)
             ],
             if (record.error != null) ...[
               const Divider(),
