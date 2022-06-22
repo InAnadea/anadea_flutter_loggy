@@ -21,7 +21,10 @@ class LogsScreen extends StatelessWidget {
     this.customRecordBuilders = const {},
   }) : super(key: key);
 
+  /// Minimum level for log records
   final LogLevel? logLevel;
+
+  /// Custom bulders for speciffic [LogRecord] objects.
   final Map<Type, LogRecordCardBuilder> customRecordBuilders;
 
   @override

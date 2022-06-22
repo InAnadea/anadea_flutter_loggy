@@ -1,5 +1,21 @@
 part of 'anadea_flutter_loggy.dart';
 
+/// Overlay button to open the log screen
+///
+/// Is usually used in app builder
+///
+/// ```dart
+/// @override
+/// Widget build(BuildContext context) {
+///   return MaterialApp(
+///     navigatorKey: _navigatorKey,
+///     builder: (context, child) => Inspector(
+///       navigatorKey: _navigatorKey,
+///       child: child!,
+///     ),
+///   );
+/// }
+/// ```
 class Inspector extends StatefulWidget {
   const Inspector({
     Key? key,
@@ -9,7 +25,10 @@ class Inspector extends StatefulWidget {
   }) : super(key: key);
 
   final Widget child;
+
+  /// Root navigator key. Used for logs screen navigation.
   final GlobalKey<NavigatorState> navigatorKey;
+
   final Map<Type, LogRecordCardBuilder> customRecordBuilders;
 
   @override
