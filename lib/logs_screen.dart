@@ -73,7 +73,14 @@ class LogsScreen extends StatelessWidget {
                       for (final record in groupedRecords[loggerName]!)
                         if (record.object is NavigationLogRecord)
                           _buildNavigationRecord(
-                              record.object as NavigationLogRecord)
+                            context,
+                            record.object as NavigationLogRecord,
+                          )
+                        else if (record.object is DioLogRecord)
+                          _buildDioRecord(
+                            context,
+                            record.object as DioLogRecord,
+                          )
                         else if (customRecordBuilders
                             .containsKey(record.object.runtimeType))
                           customRecordBuilders[record.object.runtimeType]!
@@ -90,10 +97,101 @@ class LogsScreen extends StatelessWidget {
     );
   }
 
-  Card _buildNavigationRecord(NavigationLogRecord record) {
+  Widget _buildNavigationRecord(
+    BuildContext context,
+    NavigationLogRecord record,
+  ) {
     return Card(
-      child: Text(record.toString()),
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          record.toString(),
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      ),
     );
+  }
+
+  Widget _buildDioRecord(BuildContext context, DioLogRecord record) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 5,
+      color: _getDioRecordColor(context, record),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              record.toString(),
+              style: theme.textTheme.bodyLarge,
+            ),
+            if (record.options != null) ...[
+              if (record.options!.headers.isNotEmpty) ...[
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'HEADERS',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                JsonViewer(record.options!.headers),
+              ],
+              if (record.options!.data != null) ...[
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'DATA',
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                ),
+                JsonViewer(jsonDecode(record.options!.data))
+              ],
+            ],
+            if (record.response != null) ...[
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'HEADERS',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+              JsonViewer(record.response!.headers.map),
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'DATA',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+              JsonViewer(jsonDecode(record.response!.data))
+            ],
+            if (record.error != null) ...[
+              const Divider(),
+              Text(record.error!.message),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getDioRecordColor(BuildContext context, DioLogRecord record) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    switch (record.type) {
+      case DioLogRecordType.error:
+        return colorScheme.errorContainer;
+
+      case DioLogRecordType.request:
+      case DioLogRecordType.response:
+        return colorScheme.surface;
+    }
   }
 }
 

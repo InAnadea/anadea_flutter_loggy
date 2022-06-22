@@ -91,10 +91,10 @@ class DemoPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 dio.get(
-                  'http://www.7timer.info/bin/api.pl?lon=113.17&lat=23.09&product=astro&output=xml',
+                  'http://www.7timer.info/bin/api.pl?lon=113.17&lat=23.09&product=astro&output=json',
                 );
                 dio.get(
-                  'http://www.7timer.info/bn/api.pl?lon=113.17&lat=23.09&product=astro&output=xml',
+                  'http://www.7timer.info/bn/api.pl?lon=113.17&lat=23.09&product=astro&output=json',
                 );
               },
               child: Text("test dio logs"),

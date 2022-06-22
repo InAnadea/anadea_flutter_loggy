@@ -31,15 +31,17 @@ class DioLogRecord {
 
     switch (type) {
       case DioLogRecordType.request:
-        str += 'REQUEST ${options?.path}';
+        str += '> REQUEST ${options?.method} ${options?.path}';
         break;
 
       case DioLogRecordType.error:
-        str += 'ERROR ${error?.requestOptions.uri} ${error?.message}';
+        str +=
+            '< ERROR  ${error?.requestOptions.method}  ${error?.requestOptions.uri} ${error?.message}';
         break;
 
       case DioLogRecordType.response:
-        str += 'RESPONSE ${response?.requestOptions.uri}';
+        str +=
+            '< RESPONSE  ${response?.requestOptions.method}  ${response?.requestOptions.uri}';
         break;
     }
 
