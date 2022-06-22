@@ -35,7 +35,7 @@ class ExampleApp extends StatelessWidget {
 
 `_navigatorKey` used for navigation to the `LogsScreen`.
 
-# Dio integration
+### Dio integration
 
 For dio logging add `LogInterceptor` to the dio instanse.
 
@@ -43,7 +43,7 @@ For dio logging add `LogInterceptor` to the dio instanse.
 final dio = Dio()..interceptors.add(LogInterceptor());
 ```
 
-# Navigator integration
+### Navigator integration
 
 Add `LogNavigatorObserver` to the navigator.
 
