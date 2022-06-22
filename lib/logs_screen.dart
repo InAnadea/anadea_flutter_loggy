@@ -101,13 +101,24 @@ class LogsScreen extends StatelessWidget {
     BuildContext context,
     LogRecord record,
   ) {
+    var theme = Theme.of(context);
     return Card(
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(
-          record.object.toString(),
-          style: Theme.of(context).textTheme.bodyLarge,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              record.object.toString(),
+              style: theme.textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              record.time.toIso8601String().split('T')[1],
+              style: theme.textTheme.caption,
+            ),
+          ],
         ),
       ),
     );
@@ -125,7 +136,7 @@ class LogsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              record.toString(),
+              dioLogRecord.toString(),
               style: theme.textTheme.bodyLarge,
             ),
             if (dioLogRecord.options != null) ...[
@@ -182,6 +193,11 @@ class LogsScreen extends StatelessWidget {
               const Divider(),
               Text(dioLogRecord.error!.message),
             ],
+            const SizedBox(height: 10),
+            Text(
+              record.time.toIso8601String().split('T')[1],
+              style: theme.textTheme.caption,
+            ),
           ],
         ),
       ),
@@ -209,9 +225,19 @@ class LogsScreen extends StatelessWidget {
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(
-          blocRecord.toString(),
-          style: theme.textTheme.bodyLarge,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              blocRecord.toString(),
+              style: theme.textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              record.time.toIso8601String().split('T')[1],
+              style: theme.textTheme.caption,
+            ),
+          ],
         ),
       ),
     );
