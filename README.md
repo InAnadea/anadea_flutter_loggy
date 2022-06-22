@@ -5,6 +5,7 @@ A `loggy` extensions package.
 * Logs inspector
 * Dio integrations
 * Navigation logging
+* Bloc log observer
 
 ## Getting started
 
@@ -59,5 +60,24 @@ Widget build(BuildContext context) {
         ),
         ...
     );
+}
+```
+
+### Bloc integration
+
+Add `LogBlocObserver` for zone.
+
+```dart
+void main() {
+  BlocOverrides.runZoned(
+    () async {
+      Loggy.initLoggy(
+        logPrinter: StreamPrinter(const PrettyPrinter()),
+      );
+
+      runApp(ExampleApp());
+    },
+    blocObserver: LogBlocObserver(),
+  );
 }
 ```
