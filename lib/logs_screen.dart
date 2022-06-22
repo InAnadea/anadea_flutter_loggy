@@ -15,11 +15,17 @@ typedef LogRecordCardBuilder = Widget Function(
 );
 
 class LogsScreen extends StatelessWidget {
-  const LogsScreen({
+  LogsScreen({
     this.logLevel = LogLevel.all,
     Key? key,
-    this.customRecordBuilders = const {},
-  }) : super(key: key);
+    Map<Type, LogRecordCardBuilder> customRecordBuilders = const {},
+  })  : customRecordBuilders = {
+          ...customRecordBuilders,
+          DioLogRecord: LogsScreen._buildDioRecord,
+          NavigationLogRecord: LogsScreen._buildNavigationRecord,
+          BlocLogRecord: LogsScreen._buildBlocRecord,
+        },
+        super(key: key);
 
   /// Minimum level for log records
   final LogLevel? logLevel;
@@ -75,17 +81,7 @@ class LogsScreen extends StatelessWidget {
                     reverse: true,
                     children: [
                       for (final record in groupedRecords[loggerName]!)
-                        if (record.object is NavigationLogRecord)
-                          _buildNavigationRecord(
-                            context,
-                            record.object as NavigationLogRecord,
-                          )
-                        else if (record.object is DioLogRecord)
-                          _buildDioRecord(
-                            context,
-                            record.object as DioLogRecord,
-                          )
-                        else if (customRecordBuilders
+                        if (customRecordBuilders
                             .containsKey(record.object.runtimeType))
                           customRecordBuilders[record.object.runtimeType]!
                               .call(context, record)
@@ -101,27 +97,28 @@ class LogsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationRecord(
+  static Widget _buildNavigationRecord(
     BuildContext context,
-    NavigationLogRecord record,
+    LogRecord record,
   ) {
     return Card(
       elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          record.toString(),
+          record.object.toString(),
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
     );
   }
 
-  Widget _buildDioRecord(BuildContext context, DioLogRecord record) {
+  static Widget _buildDioRecord(BuildContext context, LogRecord record) {
     final theme = Theme.of(context);
+    final dioLogRecord = record.object as DioLogRecord;
     return Card(
       elevation: 5,
-      color: _getDioRecordColor(context, record),
+      color: _getDioRecordColor(context, dioLogRecord),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -131,8 +128,8 @@ class LogsScreen extends StatelessWidget {
               record.toString(),
               style: theme.textTheme.bodyLarge,
             ),
-            if (record.options != null) ...[
-              if (record.options!.headers.isNotEmpty) ...[
+            if (dioLogRecord.options != null) ...[
+              if (dioLogRecord.options!.headers.isNotEmpty) ...[
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -141,9 +138,9 @@ class LogsScreen extends StatelessWidget {
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
-                JsonViewer(record.options!.headers),
+                JsonViewer(dioLogRecord.options!.headers),
               ],
-              if (record.options!.data != null) ...[
+              if (dioLogRecord.options!.data != null) ...[
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -152,13 +149,13 @@ class LogsScreen extends StatelessWidget {
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
-                if (record.options!.data is String)
-                  JsonViewer(jsonDecode(record.options!.data))
+                if (dioLogRecord.options!.data is String)
+                  JsonViewer(jsonDecode(dioLogRecord.options!.data))
                 else
-                  JsonViewer(record.options!.data)
+                  JsonViewer(dioLogRecord.options!.data)
               ],
             ],
-            if (record.response != null) ...[
+            if (dioLogRecord.response != null) ...[
               const Divider(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -167,7 +164,7 @@ class LogsScreen extends StatelessWidget {
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
-              JsonViewer(record.response!.headers.map),
+              JsonViewer(dioLogRecord.response!.headers.map),
               const Divider(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -176,14 +173,14 @@ class LogsScreen extends StatelessWidget {
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
-              if (record.response!.data is String)
-                JsonViewer(jsonDecode(record.response!.data))
+              if (dioLogRecord.response!.data is String)
+                JsonViewer(jsonDecode(dioLogRecord.response!.data))
               else
-                JsonViewer(record.response!.data)
+                JsonViewer(dioLogRecord.response!.data)
             ],
             if (record.error != null) ...[
               const Divider(),
-              Text(record.error!.message),
+              Text(dioLogRecord.error!.message),
             ],
           ],
         ),
@@ -191,7 +188,7 @@ class LogsScreen extends StatelessWidget {
     );
   }
 
-  Color _getDioRecordColor(BuildContext context, DioLogRecord record) {
+  static Color _getDioRecordColor(BuildContext context, DioLogRecord record) {
     final colorScheme = Theme.of(context).colorScheme;
 
     switch (record.type) {
@@ -202,6 +199,22 @@ class LogsScreen extends StatelessWidget {
       case DioLogRecordType.response:
         return colorScheme.surface;
     }
+  }
+
+  static Widget _buildBlocRecord(BuildContext context, LogRecord record) {
+    final blocRecord = record.object as BlocLogRecord;
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 5,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          blocRecord.toString(),
+          style: theme.textTheme.bodyLarge,
+        ),
+      ),
+    );
   }
 }
 

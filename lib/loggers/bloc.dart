@@ -73,6 +73,31 @@ class BlocLogRecord {
   final Transition? transition;
   final Object? error;
   final StackTrace? stackTrace;
+
+  @override
+  String toString() {
+    switch (type) {
+      case BlocLogRecordType.onCreate:
+        return '${bloc.runtimeType} CREATED';
+
+      case BlocLogRecordType.onEvent:
+        return '${bloc.runtimeType} EVENT ADDED ${event?.runtimeType}';
+
+      case BlocLogRecordType.onChange:
+        return '${bloc.runtimeType} STATE CHANGED '
+            '${change?.currentState.runtimeType} > ${change?.nextState.runtimeType}';
+
+      case BlocLogRecordType.onTransition:
+        return '${bloc.runtimeType} TRANSITION ${transition?.event.runtimeType} '
+            '${change?.currentState.runtimeType} > ${change?.nextState.runtimeType}';
+
+      case BlocLogRecordType.onError:
+        return '${bloc.runtimeType} ERROR ${error.runtimeType}';
+
+      case BlocLogRecordType.onClose:
+        return '${bloc.runtimeType} CLOSED';
+    }
+  }
 }
 
 class LogBlocObserver extends BlocObserver with BlocLoggy {
