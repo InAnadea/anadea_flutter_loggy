@@ -12,6 +12,7 @@ dependencies:
   dio: ^4.0.6
   flutter:
     sdk: flutter
+  flutter_bloc: ^8.0.1
   flutter_json_viewer: ^1.0.1
   flutter_loggy: ^2.0.1
   loggy: ^2.0.1+1

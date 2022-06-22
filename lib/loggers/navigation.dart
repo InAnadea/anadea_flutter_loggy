@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:loggy/loggy.dart';
+part of anadea_flutter_loggy;
 
 mixin NavigationLoggy implements LoggyType {
   @override

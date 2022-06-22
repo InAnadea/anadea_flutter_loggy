@@ -61,6 +61,7 @@ class LogsScreen extends StatelessWidget {
           child: Scaffold(
             appBar: AppBar(
               bottom: TabBar(
+                isScrollable: true,
                 tabs: [
                   for (final loggerName in groupedRecords.keys)
                     Tab(text: loggerName)

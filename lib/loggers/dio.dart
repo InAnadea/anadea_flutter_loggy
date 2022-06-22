@@ -1,5 +1,4 @@
-import 'package:dio/dio.dart';
-import 'package:loggy/loggy.dart';
+part of anadea_flutter_loggy;
 
 mixin DioLoggy implements LoggyType {
   @override

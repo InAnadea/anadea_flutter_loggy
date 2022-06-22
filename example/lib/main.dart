@@ -1,15 +1,23 @@
 import 'package:anadea_flutter_loggy/anadea_flutter_loggy.dart';
 import 'package:dio/dio.dart' hide LogInterceptor;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_loggy/flutter_loggy.dart';
 import 'package:loggy/loggy.dart';
 
-void main() {
-  Loggy.initLoggy(
-    logPrinter: StreamPrinter(const PrettyPrinter()),
-  );
+import 'bloc/example_bloc.dart';
 
-  runApp(ExampleApp());
+void main() {
+  BlocOverrides.runZoned(
+    () async {
+      Loggy.initLoggy(
+        logPrinter: StreamPrinter(const PrettyPrinter()),
+      );
+
+      runApp(ExampleApp());
+    },
+    blocObserver: LogBlocObserver(),
+  );
 }
 
 class ExampleApp extends StatelessWidget {
@@ -22,7 +30,10 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       navigatorObservers: [LogNavigatorObserver()],
-      home: DemoPage(),
+      home: BlocProvider(
+        create: (context) => ExampleBloc(),
+        child: DemoPage(),
+      ),
       builder: (context, child) => Inspector(
         customRecordBuilders: {
           TestLogModel: (context, record) => Text(record.object.toString())
@@ -98,6 +109,14 @@ class DemoPage extends StatelessWidget {
                 );
               },
               child: Text("test dio logs"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<ExampleBloc>(context)
+                    .add(const GetExampleData());
+              },
+              child: Text("test bloc logs"),
             ),
           ],
         ),
