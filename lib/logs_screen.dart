@@ -161,7 +161,7 @@ class LogsScreen extends StatelessWidget {
                   ),
                 ),
                 if (dioLogRecord.options!.data is String)
-                  JsonViewer(jsonDecode(dioLogRecord.options!.data))
+                  JsonViewer(json.decode(dioLogRecord.options!.data))
                 else
                   JsonViewer(dioLogRecord.options!.data)
               ],
@@ -185,7 +185,7 @@ class LogsScreen extends StatelessWidget {
                 ),
               ),
               if (dioLogRecord.response!.data is String)
-                JsonViewer(jsonDecode(dioLogRecord.response!.data))
+                JsonViewer(json.decode(dioLogRecord.response!.data))
               else
                 JsonViewer(dioLogRecord.response!.data)
             ],
