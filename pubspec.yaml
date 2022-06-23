@@ -13,7 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
-  flutter_json_viewer: ^1.0.1
+  flutter_json_viewer:
+    git:
+      url: https://github.com/InAnadea/flutter_json_viewer.git
+      ref: master
   flutter_loggy: ^2.0.1
   loggy: ^2.0.1+1
 

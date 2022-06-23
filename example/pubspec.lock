@@ -93,9 +93,11 @@ packages:
   flutter_json_viewer:
     dependency: transitive
     description:
-      name: flutter_json_viewer
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: "3fe78d2ebe047206b1306995915c8e742a0595f7"
+      url: "https://github.com/InAnadea/flutter_json_viewer.git"
+    source: git
     version: "1.0.1"
   flutter_lints:
     dependency: "direct dev"
