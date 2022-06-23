@@ -161,7 +161,7 @@ class LogsScreen extends StatelessWidget {
                   ),
                 ),
                 if (dioLogRecord.options!.data is String)
-                  JsonViewer(json.decode(dioLogRecord.options!.data))
+                  JsonViewer(_decode(dioLogRecord.options!.data))
                 else
                   JsonViewer(dioLogRecord.options!.data)
               ],
@@ -185,7 +185,7 @@ class LogsScreen extends StatelessWidget {
                 ),
               ),
               if (dioLogRecord.response!.data is String)
-                JsonViewer(json.decode(dioLogRecord.response!.data))
+                JsonViewer(_decode(dioLogRecord.response!.data))
               else
                 JsonViewer(dioLogRecord.response!.data)
             ],
@@ -202,6 +202,13 @@ class LogsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static _decode(String data) {
+    if (data.isEmpty) {
+      return null;
+    }
+    return json.decode(data);
   }
 
   static Color _getDioRecordColor(BuildContext context, DioLogRecord record) {
