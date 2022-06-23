@@ -22,6 +22,7 @@ class Inspector extends StatefulWidget {
     required this.child,
     required this.navigatorKey,
     this.customRecordBuilders = const {},
+    this.isShow = false,
   }) : super(key: key);
 
   final Widget child;
@@ -30,6 +31,8 @@ class Inspector extends StatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
 
   final Map<Type, LogRecordCardBuilder> customRecordBuilders;
+
+  final bool isShow;
 
   @override
   State<Inspector> createState() => _InspectorState();
@@ -40,6 +43,10 @@ class _InspectorState extends State<Inspector> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.isShow) {
+      return widget.child;
+    }
+
     return Stack(
       alignment: Alignment.center,
       children: [
